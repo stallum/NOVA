@@ -9,12 +9,14 @@ load_dotenv()
 from langchain_google_genai import GoogleGenerativeAI
 
 from utils.video_summarize import YoutubeDownloader
+from utils.styling import Style
 
 
 class NOVA: 
     def __init__(self):
         self.llm = GoogleGenerativeAI(model="gemini-2.5-flash-lite")
         self.yt = YoutubeDownloader()
+        self.st = Style()
 
 
     def criarTitulo(self, msg):
@@ -27,11 +29,7 @@ class NOVA:
         )
         return title
     
-    def typeEffect(self, msg, delay="0.01"):
-        for i in msg:
-            print(i, end='')
-            sys.stdout.flush()
-            sleep(delay)
+    
     
     def limpar_tela(self):
         os.system("cls" if os.name == "nt" else "clear")
@@ -66,8 +64,8 @@ class NOVA:
 
         # Se for a primeira vez, usa animação
         if self.first_run:
-            self.typeEffect(nova, 0.008)
-            self.typeEffect(desc, 0.05)
+            self.st.typeEffect(nova, 0.008)
+            self.st.typeEffect(desc, 0.05)
             print(menu)
             self.first_run = False  # Marca que já rodou
         else:
@@ -103,10 +101,7 @@ if __name__ == "__main__":
     if msg == "/quit":
         bot.limpar_tela()
         print(f"(N.O.V.A.): ", end='')
-        for i in "Até mais...":
-            print(i, end='')
-            sys.stdout.flush()
-            sleep(0.01)
+        bot.st.typeEffect(msg="Até mais...")
         sleep(2.4)
         bot.limpar_tela()
         sys.exit()
