@@ -37,24 +37,23 @@ class NOVA:
         os.system("cls" if os.name == "nt" else "clear")
 
     def mostrar_interface(self):
+    # Cria o atributo first_run na primeira chamada
+        if not hasattr(self, "first_run"):
+            self.first_run = True  
+
         self.limpar_tela()
         ROXO = "\033[1;35m"
         RESET = "\033[0m"
         YELLOW = "\033[1;33m"
 
-
         nova = f"""{ROXO}
-         __    _        _______        __   __        _______       
-        |  |  | |      |       |      |  | |  |      |   _   |      
-        |   |_| |      |   _   |      |  |_|  |      |  |_|  |      
-        |       |      |  | |  |      |       |      |       |      
-        |  _    | ___  |  |_|  | ___  |       | ___  |       | ___  
-        | | |   ||   | |       ||   |  |     | |   | |   _   ||   | 
-        |_|  |__||___| |_______||___|   |___|  |___| |__| |__||___| 
-
+         _____   _____   _____   _____   
+        |   | | |     | |  |  | |  _  |  
+        | | | |_|  |  |_|  |  |_|     |_
+        |_|___|_|_____|_|\___/|_|__|__|_| 
         {RESET}"""
 
-        desc = f'{YELLOW}Escolha uma das opções abaixo para proseguir com o programa. ou digite "/quit" para finaliza-lo.{RESET}'
+        desc = f'\n\n{YELLOW}Escolha uma das opções abaixo para proseguir com o programa. ou digite "/quit" para finaliza-lo.{RESET}\n\n'
 
         menu = f"""{YELLOW}
         MENU DE OPÇÕES: 
@@ -65,50 +64,17 @@ class NOVA:
         {RESET}
         """
 
-        
-        self.typeEffect(nova, 0.008)
-        self.typeEffect(desc, 0.05)
+        # Se for a primeira vez, usa animação
+        if self.first_run:
+            self.typeEffect(nova, 0.008)
+            self.typeEffect(desc, 0.05)
+            print(menu)
+            self.first_run = False  # Marca que já rodou
+        else:
+            print(nova)
+            print(desc)
+            print(menu)
 
-        print(menu)
-        
-        msg = input("\n(You): ")
-        return msg
-    
-    def interface_construida(self):
-        self.limpar_tela()
-        ROXO = "\033[1;35m"
-        RESET = "\033[0m"
-        YELLOW = "\033[1;33m"
-
-
-        nova = f"""{ROXO}
-         __    _        _______        __   __        _______       
-        |  |  | |      |       |      |  | |  |      |   _   |      
-        |   |_| |      |   _   |      |  |_|  |      |  |_|  |      
-        |       |      |  | |  |      |       |      |       |      
-        |  _    | ___  |  |_|  | ___  |       | ___  |       | ___  
-        | | |   ||   | |       ||   |  |     | |   | |   _   ||   | 
-        |_|  |__||___| |_______||___|   |___|  |___| |__| |__||___| 
-
-        {RESET}"""
-
-        desc = f'{YELLOW}Escolha uma das opções abaixo para proseguir com o programa. ou digite "/quit" para finaliza-lo.{RESET}'
-
-        menu = f"""{YELLOW}
-        MENU DE OPÇÕES: 
-        [1] RESUMIR VIDEO YOUTUBE
-        [2] RESUMIR PDF
-        [3] INSERIR TEXTO
-        
-        {RESET}
-        """
-
-        
-        print(nova)
-        print(desc)
-
-        print(menu)
-        
         msg = input("\n(You): ")
         return msg
     
@@ -121,19 +87,18 @@ if __name__ == "__main__":
     while msg != "/quit":
 
         if msg == "1":
-            print("\n \nMe envie o link do vídeo do youtube que quer baixar. \n")
+            print("\n \nMe envie o link do vídeo do youtube que quer baixar. ou \"/back\" para voltar ao menu\n")
 
             link_yt= input("\n(You): ")
 
             bot.yt.baixarVideo(link_yt)
             sleep(2)
-            bot.limpar_tela()  
             msg = None
         
         if msg == "2":
             pass
 
-        msg = bot.interface_construida()
+        msg = bot.mostrar_interface()
     
     if msg == "/quit":
         bot.limpar_tela()
@@ -142,6 +107,6 @@ if __name__ == "__main__":
             print(i, end='')
             sys.stdout.flush()
             sleep(0.01)
-        sleep(5)
+        sleep(2.4)
         bot.limpar_tela()
         sys.exit()
