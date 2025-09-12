@@ -105,3 +105,13 @@ if __name__ == "__main__":
         sleep(2.4)
         bot.limpar_tela()
         sys.exit()
+
+
+        # st.typeEffect("Qual o diretório onde encontra-se o pdf?\n \n")
+            
+        # path = input("(YOU): ")
+
+        # print("(NOVA): ", end='')
+        # st.typeEffect("Qual o nome do pdf que você quer que eu leia?")
+
+        # arq_name = input("(YOU): ")
