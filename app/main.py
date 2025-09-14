@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from langchain_google_genai import GoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from utils.video_summarize import YoutubeDownloader
 from utils.styling import Style
@@ -14,7 +14,7 @@ from utils.styling import Style
 
 class NOVA: 
     def __init__(self):
-        self.llm = GoogleGenerativeAI(model="gemini-2.5-flash-lite")
+        self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=0)
         self.yt = YoutubeDownloader()
         self.st = Style()
 
@@ -28,9 +28,7 @@ class NOVA:
             f'Utilize apenas termos aceitos para nomear arquivos no computador, nada de Caracteres especiais'
         )
         return title
-    
-    
-    
+          
     def limpar_tela(self):
         os.system("cls" if os.name == "nt" else "clear")
 
@@ -58,7 +56,7 @@ class NOVA:
         [1] RESUMIR VIDEO YOUTUBE
         [2] RESUMIR PDF
         [3] INSERIR TEXTO
-        
+
         {RESET}
         """
 
