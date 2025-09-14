@@ -47,7 +47,7 @@ teste = [
     "Quero que você resuma um video do youtube",
     "Quero um resumo desse documento para lê-lo mais rápido",
     "Meu professor passou um livro para a gente ler, mas tô sem tempo",
-    "Tenho um trabalho para fazer, mee ajude."
+    "Tenho um trabalho para fazer, me ajude."
 ]
 
 for msg  in teste: 
