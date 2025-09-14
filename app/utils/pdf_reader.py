@@ -28,15 +28,6 @@ class PDF():
 if __name__ == "__main__": 
     pdf = PDF()
 
-    # st.typeEffect("Qual o diretório onde encontra-se o pdf?\n \n")
-            
-    # path = input("(YOU): ")
-
-    # print("(NOVA): ", end='')
-    # st.typeEffect("Qual o nome do pdf que você quer que eu leia?")
-
-    # arq_name = input("(YOU): ")
-
     path = '/home/stallum/Downloads'
     arq_name = 'randomforest2001'
 
