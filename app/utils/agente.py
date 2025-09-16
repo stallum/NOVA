@@ -1,15 +1,13 @@
-import os
-
 from dotenv import load_dotenv
 load_dotenv()
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from typing import Literal, List, Dict
+from typing import Literal, List, Dict, TypedDict, Optional
 from langchain_core.messages import SystemMessage, HumanMessage
+from langgraph.graph import StateGraph, START, END
 
-from video_summarize import YoutubeDownloader
-from styling import Style
+# triagem menu: 
 
 class MenuOut(BaseModel):
     decisao: Literal["VIDEO_YT", "PDF", "INFO"]
@@ -43,12 +41,108 @@ def triagem(msg: str) -> Dict:
         ])
     return saida.model_dump()
 
-teste = [
-    "Quero que você resuma um video do youtube",
-    "Quero um resumo desse documento para lê-lo mais rápido",
-    "Meu professor passou um livro para a gente ler, mas tô sem tempo",
-    "Tenho um trabalho para fazer, me ajude."
-]
 
-for msg  in teste: 
-    print(f'Pergunta: {msg}\n Resposta: {triagem(msg=msg)}')
+
+# Decisões e Workflow de decisões:
+
+class AgentState(TypedDict, total = False):
+    pergunta: str
+    triagem: dict
+    resposta: Optional[str]
+    acao_final: str
+ 
+def node_triagem(state: AgentState) -> AgentState:
+    print("Executando nó de triagem...")
+    return {"triagem": triagem(state['pergunta'])}
+
+
+def node_videoYT(state: AgentState) -> AgentState:
+    print("Executando nó de videosYt...")
+
+    if state["resposta"] == 'VIDEO_YT':
+        update: AgentState = {
+            "resposta": "Para resumir o video é necessário que você me mande o link abaixo: \n",
+            "acao_final": 'VIDEO_YT'
+        }
+    
+    return update
+
+def node_PDF(state: AgentState) -> AgentState:
+    print("Execurando nó de PDF...")
+
+    if state["resposta"] == 'PDF':
+        update: AgentState = {
+            "resposta": "Para resumir o documento é necessário que você me mande o diretório e nome do arquivo, ou \"*\" para todos os arquivos do diretório: ",
+            "acao_final": "PDF"
+        }
+    
+    return update
+
+def node_INFO(state: AgentState) -> AgentState:
+    print("Executando o nó de INFO")
+
+    faltantes = state["triagem"].get("campos_faltantes", [])
+    detalhe = ','.join(faltantes) if faltantes else "Tema e contexto específico"
+
+    return {
+        "resposta": f"Para avançar, preciso que detalhe: {detalhe}",
+        "acao_final": "PEDIR_INFO"
+    }
+
+def decidir_pos_triagem(state: AgentState) -> str:
+    print("Dicidinfo apos a triagem...")
+    decisao = state["triagem"]["decisao"]
+
+    if not decisao:
+        print("Erro: 'acao_final' não encontrada em triagem:", triagem)
+        return "info"
+
+    if decisao == "VIDEO_YT": return "video_yt"
+    if decisao == "PDF": return "documento_pdf"
+    if decisao == "PEDIR_INFO": return "info"
+
+# langgraph para organizar as tarefas.
+
+workflow = StateGraph(AgentState)
+
+workflow.add_node("triagem", node_triagem)
+workflow.add_node("resumir_videoYoutube", node_videoYT)
+workflow.add_node("resumir_PDF", node_PDF)
+workflow.add_node("pedir_info", node_INFO)
+
+workflow.add_edge(START, "triagem")
+workflow.add_conditional_edges("triagem", decidir_pos_triagem, {
+    "video_yt": "resumir_videoYoutube",
+    "documento_pdf": "resumir_PDF",
+    "info": "pedir_info"
+})
+
+workflow.add_edge("resumir_videoYoutube", END)
+workflow.add_edge("resumir_PDF", END)
+workflow.add_edge("pedir_info", END)
+
+grafo = workflow.compile()
+
+
+if __name__ == "__main__":
+    teste = [
+        "Quero que você resuma um video do youtube",
+        "Quero um resumo desse documento para lê-lo mais rápido",
+        "Meu professor passou um livro para a gente ler, mas tô sem tempo",
+        "Tenho um trabalho para fazer, me ajude."
+    ]
+
+    for msg_test in teste:
+        resposta_final = grafo.invoke({"pergunta": msg_test})
+
+        triag = resposta_final.get("triagem", {})
+        print(f"PERGUNTA: {msg_test}")
+        print(f"DECISÃO: {triag.get('decisao')} | URGÊNCIA: {triag.get('urgencia')} | AÇÃO FINAL: {resposta_final.get('acao_final')}")
+        print(f"RESPOSTA: {resposta_final.get('resposta')}")
+        if resposta_final.get("citacoes"):
+            print("CITAÇÕES:")
+            for citacao in resposta_final.get("citacoes"):
+                print(f" - Documento: {citacao['documento']}, Página: {citacao['pagina']}")
+                print(f"   Trecho: {citacao['trecho']}")
+
+        print("------------------------------------")
