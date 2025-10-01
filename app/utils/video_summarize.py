@@ -8,7 +8,7 @@ import ffmpeg # type: ignore
 from openai import OpenAI
 import whisper
 
-class YoutubeDownloader:
+class YoutubeSummarize:
     def __init__(self):
         self.client = OpenAI()
 
@@ -79,7 +79,7 @@ class YoutubeDownloader:
             return ""
 
 if __name__ == '__main__':
-    yt = YoutubeDownloader()
+    yt = YoutubeSummarize()
     link = 'https://youtu.be/7j60jaMapJ0?si=Q2CcYP2uVFzbfFfo'
     path, title = yt.baixarVideo(link)
     if path and title:

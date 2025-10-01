@@ -9,6 +9,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 import json
 
+from video_summarize import YoutubeSummarize
 # triagem menu: 
 llm = ChatGoogleGenerativeAI(
     model='gemini-2.5-flash',
@@ -51,6 +52,7 @@ class AgentState(TypedDict, total= False):
     pergunta: str
     triagem: dict
     acao_final: str
+    result: str
 
 def node_triagem(state: AgentState) -> AgentState:
     print("Executando nó de triagem...")
@@ -59,7 +61,14 @@ def node_triagem(state: AgentState) -> AgentState:
 
 def node_youtube(state: AgentState) -> AgentState:
     print("Executando nó de video do Youtube...")
-    return {"acao_final": "video_yt"}
+    yt = YoutubeSummarize()
+    link = input(f"\n")
+    path, title = yt.baixarVideo(link)
+    if path and title:
+        audio_path = yt.audio(path, title)
+        if audio_path:
+            texto_transcrito = yt.transcrever_audio(audio_path)
+    return {"result": texto_transcrito, "acao_final": 'VIDEO_YT'}
 
 def node_pdf(state: AgentState) -> AgentState:
     print("Executando nó de pdf...")
