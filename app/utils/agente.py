@@ -10,6 +10,8 @@ from langgraph.graph import StateGraph, START, END
 import json
 
 from video_summarize import YoutubeSummarize
+from pdf_reader import PDF
+
 # triagem menu: 
 llm = ChatGoogleGenerativeAI(
     model='gemini-2.5-flash',
@@ -51,7 +53,7 @@ def decisao_triagem(resposta: str) -> str:
 class AgentState(TypedDict, total= False):
     pergunta: str
     triagem: dict
-    acao_final: str
+    texto: str
     result: str
 
 def node_triagem(state: AgentState) -> AgentState:
@@ -68,15 +70,23 @@ def node_youtube(state: AgentState) -> AgentState:
         audio_path = yt.audio(path, title)
         if audio_path:
             texto_transcrito = yt.transcrever_audio(audio_path)
-    return {"result": texto_transcrito, "acao_final": 'VIDEO_YT'}
+    return {"text": texto_transcrito}
 
 def node_pdf(state: AgentState) -> AgentState:
     print("Executando nó de pdf...")
-    return {"acao_final": "PDF"}
+    pdf = PDF()
+
+    path = input("")
+
+    texto_transcrito = pdf.carregar_pdf(path)
+
+    return {"texto": texto_transcrito}
 
 def node_mensagem(state: AgentState) -> AgentState:
     print("Executando nó de mensagem...")
-    return {"acao_final": "resumir_mensagem"}
+    return {"result": "resumir_mensagem"}
+
+
 
 def decidir_pos_triagem(state: AgentState) -> str:
     print("Decidindo após a triagem...")
