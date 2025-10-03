@@ -107,7 +107,7 @@ def node_nota(state: AgentState) -> AgentState:
     if chat.lower == 'y': 
         result = nota.criar_nota(state["texto"])
         return {"result": result}
-    else: return {"result": 'Não foi resumido o texto.'}
+    else: return {"result": 'O texto não foi resumido.'}
 
 
 def decidir_pos_triagem(state: AgentState) -> str:

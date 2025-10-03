@@ -48,6 +48,9 @@ class YoutubeSummarize:
                 print(f'Pasta criada: {output_path}')
 
             ffmpeg.input(video_path).output(audio_path, format='wav').run()
+            
+            os.remove(video_path)
+
             print(f"sucesso na conversão do audio em {output_path}")
             return audio_path
 
@@ -57,9 +60,7 @@ class YoutubeSummarize:
     
     def transcrever_audio(self, audio_path: str) -> str:
         """
-        Transcreve o áudio de um arquivo usando a API da OpenAI (Whisper).
-        :param audio_path: O caminho para o arquivo de áudio.
-        :return: O texto transcrito.
+        Transcreve o áudio de um arquivo usando a API da OpenAI (Whisper).        
         """
         model = whisper.load_model("turbo")
 
@@ -67,13 +68,17 @@ class YoutubeSummarize:
             print(f"Transcrevendo o áudio de: {audio_path}")
             transcription = model.transcribe(audio_path)
             print("Transcrição concluída com sucesso.")
-            # O Whisper retorna um dict, então acessa o campo 'text'
+
+            os.remove(audio_path)
+
             if isinstance(transcription, dict):
                 return transcription.get('text', '')
             elif hasattr(transcription, 'text'):
                 return transcription.text
             else:
                 return str(transcription)
+            
+
         except Exception as e:
             print(f"Erro ao transcrever o áudio: {e}")
             return ""

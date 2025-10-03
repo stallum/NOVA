@@ -2,9 +2,6 @@ from time import sleep
 
 import sys
 
-from dotenv import load_dotenv
-load_dotenv()
-
 from utils.styling import Style
 from utils.agente import grafo
 
