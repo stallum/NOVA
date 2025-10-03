@@ -9,11 +9,17 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 import json
 
+from utils.styling import Style
+
 from utils.video_summarize import YoutubeSummarize
 from utils.pdf_reader import PDF
 from utils.notas import Notas
 
+
+
 # triagem menu: 
+st = Style()
+
 llm = ChatGoogleGenerativeAI(
     model='gemini-2.5-flash',
     temperature='0',
@@ -83,13 +89,26 @@ def node_pdf(state: AgentState) -> AgentState:
 
     return {"texto": texto_transcrito}
 
+def node_info(state: AgentState) -> AgentState:
+    print("(NOVA): ", end='')
+    st.typeEffect("Nos dê mais informação para podermos processar.\n")
+    print("(YOU): ", end='')
+    pergunta = input("")
+    return {'pergunta': pergunta}
+
 def node_nota(state: AgentState) -> AgentState:
     print("Executando nó de texto...")
     nota = Notas()
+    print("(NOVA): ", end='')
+    st.typeEffect("Você quer criar um resumo desse texto que pediu para fazer? [y/N]")
+    print("(YOU): ", end='')
+    chat = input()
 
-    result = nota.criar_nota(state["texto"])
+    if chat.lower == 'y': 
+        result = nota.criar_nota(state["texto"])
+        return {"result": result}
+    else: return {"result": 'Não foi resumido o texto.'}
 
-    return {"result": result}
 
 def decidir_pos_triagem(state: AgentState) -> str:
     print("Decidindo após a triagem...")
@@ -103,6 +122,7 @@ workflow.add_node('triagem', node_triagem)
 workflow.add_node('youtube', node_youtube)
 workflow.add_node('pdf', node_pdf)
 workflow.add_node('resumo', node_nota)
+workflow.add_node('informacao', node_info)
 
 workflow.add_edge(START, 'triagem')
 workflow.add_conditional_edges(
@@ -110,8 +130,10 @@ workflow.add_conditional_edges(
     decidir_pos_triagem,
     {
         "VIDEO_YT": "youtube",
-        "PDF": "pdf"
+        "PDF": "pdf",
+        "INFO": "informacao"
     })
+workflow.add_edge('informacao', 'triagem')
 workflow.add_edge('youtube', 'resumo')
 workflow.add_edge('pdf', 'resumo')
 workflow.add_edge('resumo', END)
@@ -119,7 +141,7 @@ grafo = workflow.compile()
 
 
 if __name__ == "__main__": 
-    teste = 'resume esse video para mim'
+    teste = 'resume esse para mim'
     decisao = grafo.invoke({"pergunta": teste})
 
     print(f'{decisao}\n')

@@ -1,8 +1,6 @@
 from time import sleep
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 import sys
-import os
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,7 +16,7 @@ if __name__ == "__main__":
     while msg != "/quit":        
 
         decisao = grafo.invoke({"pergunta": msg})
-        # msg = bot.mostrar_interface()
+        msg = bot.mostrar_interface()
 
     
     if msg == "/quit":
