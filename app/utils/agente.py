@@ -86,12 +86,10 @@ def node_pdf(state: AgentState) -> AgentState:
 def node_nota(state: AgentState) -> AgentState:
     print("Executando nó de texto...")
     nota = Notas()
-    
+
     result = nota.criar_nota(state["texto"])
 
     return {"result": result}
-
-
 
 def decidir_pos_triagem(state: AgentState) -> str:
     print("Decidindo após a triagem...")
@@ -123,9 +121,5 @@ grafo = workflow.compile()
 if __name__ == "__main__": 
     teste = 'resume esse video para mim'
     decisao = grafo.invoke({"pergunta": teste})
-
-    # resposta = triagem(teste)['content']
-    # json_str = re.sub(r'```json|```', '', resposta).strip()
-    # decisao = json.loads(json_str)['decisao']
 
     print(f'{decisao}\n')
