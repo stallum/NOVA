@@ -1,6 +1,6 @@
 # N.O.V.A. — Project README
 
-This README documents the N.O.V.A. project (Núcleo Organizador de Verbetes e Anotações). The file contains two language sections: English and Portuguese. It describes the technologies, architecture, programming logic, how to run and extend the project, environment variables, and suggested next steps.
+This README documents the N.O.V.A. project (Núcleo Organizador de Verbetes e Anotações). The file contains two language sections: English and Portuguese. It describes the technologies, architecture, programming logic, how to run and extend the project and environment variables.
 
 ## English
 
@@ -69,34 +69,6 @@ pip install python-dotenv pydantic
 2. Set required environment variables (or create `.env`).
 
 3. Run the agent from the `app/` folder: `python app/utils/agente.py` or run `app/main.py` if it exists as the intended entrypoint.
-
-Note: The agent uses `input()` to ask for links or file paths during the workflow.
-
-### Edge Cases & Considerations
-
-- Missing inputs: The triage step can return `campos_faltantes` — ensure the application requests missing fields from the user before proceeding.
-- Long media: Downloading and transcribing long videos may take significant time and memory. Consider streaming or chunked transcription.
-- Error handling: Several operations (network, file I/O, LLM calls) need robust try/except blocks with retry/backoff.
-- Authentication: Ensure API keys and credentials are set and that quota limits are considered.
-
-### Suggested Improvements
-
-- Add a `requirements.txt` or `pyproject.toml` to lock dependencies.
-- Replace blocking `input()` calls with a small CLI (argparse / Typer) or web UI for better UX and automation.
-- Add logging and configurable verbosity levels instead of prints.
-- Add unit tests for each util in `app/utils/` (use pytest).
-- Add a simple caching layer for transcriptions to avoid repeating work.
-
-### Development Checklist / Contract
-
-- Inputs: user text prompt (string), YouTube link (string) or PDF path (string).
-- Outputs: structured note (string) and possibly a saved file.
-- Error modes: missing credentials, invalid link/path, network failure, LLM errors.
-
-### Quick Troubleshooting
-
-- If the LLM fails with authentication errors, verify `GOOGLE_APPLICATION_CREDENTIALS` or other provider variables.
-- If YouTube download fails, ensure youtube-dl/yt-dlp or equivalent tools are installed and available to `video_summarize.py` implementation.
 
 ## Português (Portuguese)
 
