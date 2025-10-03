@@ -11,6 +11,7 @@ import json
 
 from video_summarize import YoutubeSummarize
 from pdf_reader import PDF
+from notas import Notas
 
 # triagem menu: 
 llm = ChatGoogleGenerativeAI(
@@ -70,7 +71,7 @@ def node_youtube(state: AgentState) -> AgentState:
         audio_path = yt.audio(path, title)
         if audio_path:
             texto_transcrito = yt.transcrever_audio(audio_path)
-    return {"text": texto_transcrito}
+    return {"texto": texto_transcrito}
 
 def node_pdf(state: AgentState) -> AgentState:
     print("Executando nó de pdf...")
@@ -82,9 +83,13 @@ def node_pdf(state: AgentState) -> AgentState:
 
     return {"texto": texto_transcrito}
 
-def node_mensagem(state: AgentState) -> AgentState:
-    print("Executando nó de mensagem...")
-    return {"result": "resumir_mensagem"}
+def node_nota(state: AgentState) -> AgentState:
+    print("Executando nó de texto...")
+    nota = Notas()
+    
+    result = nota.criar_nota(state["texto"])
+
+    return {"result": result}
 
 
 
@@ -99,6 +104,7 @@ workflow = StateGraph(AgentState)
 workflow.add_node('triagem', node_triagem)
 workflow.add_node('youtube', node_youtube)
 workflow.add_node('pdf', node_pdf)
+workflow.add_node('resumo', node_nota)
 
 workflow.add_edge(START, 'triagem')
 workflow.add_conditional_edges(
@@ -108,8 +114,9 @@ workflow.add_conditional_edges(
         "VIDEO_YT": "youtube",
         "PDF": "pdf"
     })
-workflow.add_edge('youtube', END)
-workflow.add_edge('pdf', END)
+workflow.add_edge('youtube', 'resumo')
+workflow.add_edge('pdf', 'resumo')
+workflow.add_edge('resumo', END)
 grafo = workflow.compile()
 
 

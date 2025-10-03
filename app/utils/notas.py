@@ -77,7 +77,8 @@ class Notas:
         
         with open(texto_path, 'w', encoding='utf-8') as f:
             f.write(nota)
-        print(f"Nota salva em: {texto_path}")
+
+        return f"Nota salva em: {texto_path}"
 
 
 if __name__ == '__main__':
