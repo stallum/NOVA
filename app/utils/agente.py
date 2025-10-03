@@ -9,9 +9,9 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 import json
 
-from video_summarize import YoutubeSummarize
-from pdf_reader import PDF
-from notas import Notas
+from utils.video_summarize import YoutubeSummarize
+from utils.pdf_reader import PDF
+from utils.notas import Notas
 
 # triagem menu: 
 llm = ChatGoogleGenerativeAI(
