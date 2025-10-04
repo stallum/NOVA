@@ -101,10 +101,10 @@ def node_nota(state: AgentState) -> AgentState:
     nota = Notas()
     print("(NOVA): ", end='')
     st.typeEffect("Você quer criar um resumo desse texto que pediu para fazer? [y/N]")
-    print("(YOU): ", end='')
+    print("\n(YOU): ", end='')
     chat = input()
 
-    if chat.lower == 'y': 
+    if chat.lower() == 'y': 
         result = nota.criar_nota(state["texto"])
         return {"result": result}
     else: return {"result": 'O texto não foi resumido.'}
