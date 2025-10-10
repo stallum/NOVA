@@ -4,7 +4,7 @@ load_dotenv()
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from typing import Literal, List, Dict, TypedDict, Optional
+from typing import Literal, List, Dict, TypedDict
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 import json
@@ -14,8 +14,6 @@ from utils.styling import Style
 from utils.video_summarize import YoutubeSummarize
 from utils.pdf_reader import PDF
 from utils.notas import Notas
-
-
 
 # triagem menu: 
 st = Style()
@@ -108,7 +106,6 @@ def node_nota(state: AgentState) -> AgentState:
         result = nota.criar_nota(state["texto"])
         return {"result": result}
     else: return {"result": 'O texto não foi resumido.'}
-
 
 def decidir_pos_triagem(state: AgentState) -> str:
     print("Decidindo após a triagem...")

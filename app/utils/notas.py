@@ -17,7 +17,8 @@ class Notas:
             f'Deve ser relacionado APENAS ao conteúdo do texto'
             f'Utilize apenas termos aceitos para nomear arquivos no computador, nada de Caracteres especiais'
         )
-        return title
+        # Retornar o texto do título para facilitar uso posterior
+        return title.content
     
     def criar_tags(self, texto):
         """ Essa função tem o objetivo de criar as tags da nota """
@@ -52,33 +53,29 @@ class Notas:
         print('Formatando texto...')
         texto_final = (
             f'{tags}\n\n'
-            f'## Resumo Detalhado\n{resumo}\n\n'
+            f'---\n'
+            f'{resumo}'
         )
         return texto_final
     
     def criar_nota(self, msg):
         """Essa função salva o texto em um arquivo de texto no diretório _notas."""
         print('Criando nota em arquivo')
-
-        output_path = os.getenv('OBSIDIAN_PATH')
+        output_path = f"{os.getenv('OBSIDIAN_PATH')}/0. NOVA"
 
         tags = self.criar_tags(msg)
         resumo = self.criar_resumos(msg)
-        nota = self.formatar_nota(tags, resumo)
         titulo = self.criar_titulo(resumo)
+
+        nota = self.formatar_nota(tags, resumo)
         print('Nota criada.\n\n')
         
-
-        texto_path = os.path.join(output_path, f'{titulo.content}.md')
-
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
-            print(f"Criada pasta '_notas' em: {output_path}")
+        texto = os.path.join(output_path, f'{titulo}.md')
         
-        with open(texto_path, 'w', encoding='utf-8') as f:
+        with open(texto, 'w', encoding='utf-8') as f:
             f.write(nota)
 
-        return f"Nota salva em: {texto_path}"
+        return f"Nota salva em: {texto}"
 
 
 if __name__ == '__main__':
@@ -97,5 +94,27 @@ if __name__ == '__main__':
 
     Em resumo, a computação quântica e o machine learning representam a convergência de duas áreas revolucionárias. Juntas, elas prometem abrir caminho para soluções mais rápidas, precisas e eficientes, impactando desde a ciência básica até setores econômicos inteiros. Embora ainda estejamos nos primeiros passos, o futuro aponta para um mundo em que inteligência artificial e qubits trabalharão lado a lado, expandindo os limites do que hoje consideramos possível.
     """
+
+    texto2 = """
+    O RPG de mesa é uma forma única de contar histórias coletivamente, onde cada jogador assume o papel de um personagem em um mundo imaginário e o Mestre conduz a narrativa, descrevendo cenários, desafios e consequências das ações. Mais do que apenas um jogo, o RPG é uma experiência de imersão, criatividade e trabalho em equipe — uma mistura entre teatro, estratégia e literatura viva.
+
+    Entre combates, intrigas e mistérios, há um tipo de momento que muitos grupos lembram com carinho: as sessões de viagem entre ambientes. Essas partes da aventura, muitas vezes vistas como simples transições, são na verdade oportunidades riquíssimas de narrativa. Durante as viagens, os personagens deixam para trás um local e se preparam para o desconhecido — cruzando florestas, mares, desertos ou até planos inteiros de existência.
+
+    Essas sessões podem revelar muito sobre os heróis e o mundo ao redor. É nelas que surgem conversas profundas ao redor da fogueira, encontros inesperados com criaturas ou viajantes, e testes de sobrevivência diante das forças da natureza. O ritmo desacelera, dando espaço para o desenvolvimento de laços entre personagens e para a construção de atmosfera.
+
+    Assim, as viagens em RPG de mesa não são apenas o “entre” das grandes aventuras — são parte essencial delas. São nesses caminhos que os personagens evoluem, o mundo ganha vida e a jornada, no fim das contas, se torna tão importante quanto o destino.
+    """
     notas = Notas()
-    notas.criar_nota(msg=texto)
+    notas.criar_nota(msg=texto2)
+
+    """
+    ob = notas.ler_notas()
+
+    emb = notas.gerar_embeddings(ob)
+
+    relacoes = notas.encontrar_relacoes(emb)
+    links = notas.adicionar_links(relacoes)
+
+    print(links)
+    
+    """

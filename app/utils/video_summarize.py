@@ -62,7 +62,7 @@ class YoutubeSummarize:
         """
         Transcreve o áudio de um arquivo usando a API da OpenAI (Whisper).        
         """
-        model = whisper.load_model("turbo")
+        model = whisper.load_model("medium")
 
         try:
             print(f"Transcrevendo o áudio de: {audio_path}")
