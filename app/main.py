@@ -20,4 +20,3 @@ if msg == "/quit":
     sleep(2.4)
     bot.limpar_tela()
     sys.exit()
-
