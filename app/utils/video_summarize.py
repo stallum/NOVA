@@ -85,7 +85,7 @@ class YoutubeSummarize:
 
 if __name__ == '__main__':
     yt = YoutubeSummarize()
-    link = 'https://youtu.be/7j60jaMapJ0?si=Q2CcYP2uVFzbfFfo'
+    link = 'https://youtu.be/bo47JoSxl1s?si=HbgkU-gpsdiF7FwA'
     path, title = yt.baixarVideo(link)
     if path and title:
         audio_path = yt.audio(path, title)
